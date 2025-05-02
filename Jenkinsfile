@@ -1,28 +1,52 @@
 pipeline {
     agent any
-    options {
-        skipStagesAfterUnstable()
+
+    environment {
+        IMAGE_NAME = 'myapp-image'
+        CONTAINER_NAME = 'myapp-container'
     }
+
     stages {
-        stage('Build') {
+        stage('Clone Repository') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                git 'https://github.com/BK-KRISH/DevOps.git'
             }
         }
-        stage('Test') {
+
+        stage('Build Docker Image') {
             steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+                script {
+                    sh 'docker build -t $IMAGE_NAME .'
                 }
             }
         }
-        stage('Deliver') { 
+
+        stage('Stop and Remove Old Container') {
             steps {
-                sh './jenkins/scripts/deliver.sh' 
+                script {
+                    sh """
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
+                    """
+                }
             }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    sh 'docker run -d --name $CONTAINER_NAME -p 8080:80 $IMAGE_NAME'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment completed successfully.'
+        }
+        failure {
+            echo 'Deployment failed.'
         }
     }
 }
