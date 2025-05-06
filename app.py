@@ -6,8 +6,8 @@ from langchain_community.llms import Ollama
 
 # Streamlit UI
 st.set_page_config(page_title="Poet Hari", page_icon="📝")
-st.title("📝 Welcome to Hari's Poetry World")
-st.subheader("Talk to Hari, the AI Poet!")
+st.title("📝 Welcome to Barani's Poetry World")
+st.subheader("Talk to Barani, the AI Poet!")
 
 # User Input
 user_input = st.text_input("Ask me anything or request a poem...")
@@ -30,6 +30,6 @@ if user_input:
     with st.spinner("Hari is composing... 🎤"):
         try:
             result = chain.invoke({"query": user_input})
-            st.markdown(f"**Hari's Response:**\n\n{result}")
+            st.markdown(f"**Barani's Response:**\n\n{result}")
         except Exception as e:
             st.error(f"An error occurred: {e}")
