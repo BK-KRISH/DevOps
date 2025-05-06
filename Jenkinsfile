@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/YourUsername/your-repo.git'
+                git 'https://github.com/BK-KRISH/DevOps.git'
             }
         }
 
@@ -19,7 +19,7 @@ pipeline {
         stage('Run Container') {
             steps {
                 script {
-                    dockerImage.run("-p 8501:8501")
+                    dockerImage.run("-p 8502:8501")
                 }
             }
         }
