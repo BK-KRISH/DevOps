@@ -4,23 +4,23 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/BK-KRISH/DevOps.git'
+                git url: 'https://github.com/BK-KRISH/DevOps.git', branch: 'main'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    dockerImage = docker.build("poet-app")
-                }
+                sh 'docker build -t poet-app .'
             }
         }
 
         stage('Run Container') {
             steps {
-                script {
-                    dockerImage.run("-p 8502:8501")
-                }
+                sh '''
+                    docker stop poet-container || true
+                    docker rm poet-container || true
+                    docker run -d -p 8502:8501 --name poet-container poet-app
+                '''
             }
         }
     }
