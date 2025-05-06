@@ -10,13 +10,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t poet-app .'
+                bat 'docker build -t poet-app .'
             }
         }
 
         stage('Run Container') {
             steps {
-                sh '''
+                bat '''
                     docker stop poet-container || true
                     docker rm poet-container || true
                     docker run -d -p 8502:8501 --name poet-container poet-app
