@@ -8,20 +8,27 @@ pipeline {
             }
         }
 
+        stage('Build with Maven') {
+            steps {
+                bat 'mvn clean install'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t poet-app .'
+                bat "docker build -t poet-app:%BUILD_NUMBER% ."
             }
         }
 
         stage('Run Container') {
             steps {
                 bat '''
-                    docker stop poet-container || true
-                    docker rm poet-container || true
-                    docker run -d -p 8502:8501 --name poet-container poet-app
+                    docker stop poet-container || exit 0
+                    docker rm poet-container || exit 0
+                    docker run -d -p 8502:8501 --name poet-container poet-app:%BUILD_NUMBER%
                 '''
             }
         }
     }
 }
+
