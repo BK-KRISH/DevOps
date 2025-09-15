@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "poet-app"
+        CONTAINER_NAME = "poet-container"
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
@@ -8,27 +13,26 @@ pipeline {
             }
         }
 
-        stage('Build with Maven') {
+        stage('Install Dependencies') {
             steps {
-                bat 'mvn clean install'
+                sh 'pip install -r requirements.txt'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t poet-app:%BUILD_NUMBER% ."
+                sh "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
             }
         }
 
         stage('Run Container') {
             steps {
-                bat '''
-                    docker stop poet-container || exit 0
-                    docker rm poet-container || exit 0
-                    docker run -d -p 8502:8501 --name poet-container poet-app:%BUILD_NUMBER%
+                sh '''
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+                    docker run -d -p 8502:8501 --name ${CONTAINER_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
     }
 }
-
