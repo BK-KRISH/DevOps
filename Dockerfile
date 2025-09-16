@@ -1,17 +1,15 @@
-# Use Python 3.13 base image
-FROM python:3.13-rc-slim
+# Use JDK base image
+FROM openjdk:17-jdk-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy all project files into container
-COPY . .
+# Copy JAR from target folder (after Maven build)
+COPY target/*.jar app.jar
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Expose application port
+EXPOSE 8080
 
-# Expose Streamlit's default port
-EXPOSE 8501
+# Run the app
+ENTRYPOINT ["java", "-jar", "/app.jar"]
 
-# Command to run the Streamlit app
-CMD ["streamlit", "run", "app.py"]
