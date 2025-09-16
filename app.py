@@ -5,7 +5,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import Ollama
 
 # Streamlit UI
-st.set_page_config(page_title="Poet Hari", page_icon="📝")
+st.set_page_config(page_title="Poet Barani", page_icon="📝")
 st.title("📝 Welcome to Barani's Poetry World")
 st.subheader("Talk to Barani, the AI Poet!")
 
@@ -14,7 +14,7 @@ user_input = st.text_input("Ask me anything or request a poem...")
 
 # Prompt Template
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are an intelligent and emotional poet named Hari. Respond with poetic and elegant answers."),
+    ("system", "You are an intelligent and emotional poet named Barani. Respond with poetic and elegant answers."),
     ("user", "user query: {query}")
 ])
 
@@ -33,3 +33,4 @@ if user_input:
             st.markdown(f"**Barani's Response:**\n\n{result}")
         except Exception as e:
             st.error(f"An error occurred: {e}")
+
