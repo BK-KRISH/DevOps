@@ -1,9 +1,14 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven-3.9.5'   // Jenkins Maven installation
+        jdk 'JDK17'           // Jenkins JDK installation
+    }
+
     environment {
-        IMAGE_NAME = "poet-app"
-        CONTAINER_NAME = "poet-container"
+        IMAGE_NAME = "my-java-app"
+        CONTAINER_NAME = "java-app-container"
     }
 
     stages {
@@ -13,25 +18,31 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build with Maven') {
             steps {
-                sh 'pip install -r requirements.txt'
+                bat 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                bat 'mvn test'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${env.BUILD_NUMBER} ."
+                bat "docker build -t ${IMAGE_NAME} ."
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
-                sh '''
+                bat """
                     docker stop ${CONTAINER_NAME} || true
                     docker rm ${CONTAINER_NAME} || true
-                    docker run -d -p 8502:8501 --name ${CONTAINER_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}
-                '''
+                    docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${IMAGE_NAME}
+                """
             }
         }
     }
